@@ -1,0 +1,39 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.VPS_HOST }}
+        username: ${{ secrets.VPS_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd /root/whatsapp-api-middleware
+          git pull origin main
+          docker compose down
+          docker compose build
+          docker compose up -d
+          
+          # Wait for service to be healthy
+          sleep 10
+          
+          # Health check
+          if curl -f http://localhost:8000/health 2>/dev/null; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed - rolling back"
+            git reset --hard HEAD~1
+            docker compose down
+            docker compose build
+            docker compose up -d
+            exit 1
+          fi
