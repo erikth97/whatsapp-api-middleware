@@ -27,7 +27,7 @@ jobs:
           sleep 10
           
           # Health check
-          if curl -f http://localhost:8000/health 2>/dev/null; then
+          if docker exec whatsapp-api-middleware curl -f http://localhost:8000/health 2>/dev/null; then
             echo "✅ Deployment successful!"
           else
             echo "❌ Deployment failed - rolling back"
