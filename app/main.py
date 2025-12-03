@@ -7,7 +7,7 @@ from fastapi import FastAPI
 app = FastAPI(
     title="WhatsApp API Middleware",
     description="API middleware para notificaciones WhatsApp",
-    version="0.1.0"
+    version="0.1.1"
 )
 
 
