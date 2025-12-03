@@ -26,8 +26,8 @@ jobs:
           # Wait for service to be healthy
           sleep 10
           
-          # Health check
-          if docker exec whatsapp-api-middleware curl -f http://localhost:8000/health 2>/dev/null; then
+          # Health check con Python
+          if docker exec whatsapp-api-middleware python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" 2>/dev/null; then
             echo "✅ Deployment successful!"
           else
             echo "❌ Deployment failed - rolling back"
