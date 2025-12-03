@@ -17,7 +17,7 @@ async def root():
     return {
         "message": "Hello World from WhatsApp API Middleware!",
         "status": "running",
-        "version": "0.1.0"
+        "version": "0.1.1"
     }
 
 
