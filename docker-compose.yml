@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: whatsapp-api-middleware
+    restart: unless-stopped
+    
+    # Environment variables from .env file
+    env_file:
+      - .env
+    
+    # Expose port (interno)
+    expose:
+      - "8000"
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # Networks
+    networks:
+      - root_default
+    
+    # Traefik labels
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whatsapp-api.rule=Host(`api.bdcmotomex.com`)"
+      - "traefik.http.routers.whatsapp-api.entrypoints=websecure"
+      - "traefik.http.routers.whatsapp-api.tls=true"
+      - "traefik.http.routers.whatsapp-api.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.whatsapp-api.loadbalancer.server.port=8000"
+
+# External network (Traefik)
+networks:
+  root_default:
+    external: true
